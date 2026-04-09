@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 
 public class MovementController : MonoBehaviour
 {
@@ -23,11 +24,15 @@ public class MovementController : MonoBehaviour
     [Range(0.0f, 1.0f)]
     private float ceilingBounce = 0.5f;
 
+    private Light flashLight;
+    private bool flashLightEnabled = false;
+
     void Start()
     {
         body = transform.GetComponent<CharacterController>();
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
+        flashLight = GetComponentInChildren<Light>();
     }
 
     void Update()
@@ -60,6 +65,12 @@ public class MovementController : MonoBehaviour
         CollisionFlags collisionFlags = body.Move(Vector3.down * (verticalSpeed * Time.deltaTime));
         if ((collisionFlags & CollisionFlags.Above) != 0) {
             verticalSpeed *= -ceilingBounce; // Bounce against the ceiling
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            flashLightEnabled =! flashLightEnabled;
+            flashLight.enabled = flashLightEnabled;
         }
     }
 }
